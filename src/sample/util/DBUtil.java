@@ -9,11 +9,11 @@ import java.sql.*;
  * Created by ONUR BASKIRT on 22.02.2016.
  */
 public class DBUtil {
-    //Declare JDBC Driver
     private static final String JDBC_DRIVER = "oracle.jdbc.driver.OracleDriver";
 
     //Connection
     private static Connection conn = null;
+    private static String username, password;
 
     //Connection String
     //String connStr = "jdbc:oracle:thin:Username/Password@IP:Port/SID";
@@ -36,7 +36,7 @@ public class DBUtil {
 
         //Establish the Oracle Connection using Connection String
         try {
-            conn = DriverManager.getConnection("jdbc:oracle:thin:@210.119.146.56:1521:orcl", "scott", "tiger");
+            conn = DriverManager.getConnection("jdbc:oracle:thin:@210.119.146.56:1521:orcl", username, password);
 
         } catch (SQLException e) {
             System.out.println("Connection Failed! Check output console" + e);
@@ -47,6 +47,32 @@ public class DBUtil {
             e.printStackTrace();
             throw e;
         }
+    }
+
+    public static boolean dbConnect(String user, String pass) {
+        try {
+            Class.forName(JDBC_DRIVER);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Oracle JDBC Driver Registered!");
+        try {
+            conn = DriverManager.getConnection("jdbc:oracle:thin:@210.119.146.56:1521:orcl", user.trim(), pass.trim());
+            username = user;
+            password = pass;
+            return true;
+        } catch (SQLException e) {
+            int errorCode = e.getErrorCode();
+            if (e.getErrorCode() == 1017) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Program Error");
+                alert.setHeaderText("Invalid username or password");
+                alert.show();
+            }
+            e.printStackTrace();
+            return false;
+        }
+
     }
 
     //Close Connection

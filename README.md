@@ -1,2 +1,3 @@
-# javafxexample
-This is the example of this article http://www.swtestacademy.com/database-operations-javafx
+# Java FX application with Oracle database
+
+

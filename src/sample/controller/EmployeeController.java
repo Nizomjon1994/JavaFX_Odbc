@@ -7,10 +7,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.util.Callback;
 import sample.model.Employee;
 import sample.model.EmployeeDAO;
@@ -117,21 +114,9 @@ public class EmployeeController {
         }
     }
 
-    //Initializing the controller class.
-    //This method is automatically called after the fxml file has been loaded.
     @FXML
     private void initialize() {
 
-        /*
-        The setCellValueFactory(...) that we set on the table columns are used to determine
-        which field inside the Employee objects should be used for the particular column.
-        The arrow -> indicates that we're using a Java 8 feature called Lambdas.
-        (Another option would be to use a PropertyValueFactory, but this is not type-safe
-
-        We're only using StringProperty values for our table columns in this example.
-        When you want to use IntegerProperty or DoubleProperty, the setCellValueFactory(...)
-        must have an additional asObject():
-        */
         empIdColumn.setCellValueFactory(cellData -> cellData.getValue().employeeIdProperty().asObject());
         empNameColumn.setCellValueFactory(cellData -> cellData.getValue().firstNameProperty());
         empJobColumn.setCellValueFactory(cellData -> cellData.getValue().jobIdProperty());
@@ -286,42 +271,55 @@ public class EmployeeController {
         }
     }
 
-//    @FXML
-//    private void executeQuery(ActionEvent actionEvent) throws SQLException, ClassNotFoundException {
-//        try {
-//            //Get all Employees information
-//            ObservableList<ObservableList<String>> data
-//                    = FXCollections.observableArrayList();
-//            ResultSet resultSet = DBUtil.dbExecuteQuery(sqlQueryT.getText());
-//            for (int i = 0; i < 4; i++) {
-//                final int j = i;
-//                TableColumn col = new TableColumn(resultSet.getMetaData().getColumnName(i + 1));
-//                col.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
-//                    public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {
-//                        return new SimpleStringProperty(param.getValue().get(j).toString());
-//                    }
-//                });
-//                employeeTable.getColumns().addAll(col);
-//                System.out.println("Column [" + i + "] ");
-//
-//            }
-//            while (resultSet.next()) {
-//                ObservableList<String> row = FXCollections.observableArrayList();
-//                for (int i = 0; i < 3; i++) {
-//                    row.addAll(resultSet.getString(i + 1));
-//                }
-//                System.out.println("Row [1] added " + row);
-//                data.addAll(row);
-//            }
-//
+    @FXML
+    private void executeQuery(ActionEvent actionEvent) throws SQLException, ClassNotFoundException {
+        if (sqlQueryT.getText().trim().length() > 0) {
+
+            try {
+                ObservableList<ObservableList<String>> data
+                        = FXCollections.observableArrayList();
+                ResultSet resultSet = DBUtil.dbExecuteQuery(sqlQueryT.getText());
+                for (int i = 0; i < 4; i++) {
+                    final int j = i;
+                    TableColumn col = new TableColumn(resultSet.getMetaData().getColumnName(i + 1));
+                    col.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
+                        public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {
+                            return new SimpleStringProperty(param.getValue().get(j).toString());
+                        }
+                    });
+                    employeeTable.getColumns().addAll(col);
+                    System.out.println("Column [" + i + "] ");
+
+                }
+                while (resultSet.next()) {
+                    ObservableList<String> row = FXCollections.observableArrayList();
+                    for (int i = 0; i < 3; i++) {
+                        row.addAll(resultSet.getString(i + 1));
+                    }
+                    System.out.println("Row [1] added " + row);
+                    data.addAll(row);
+                }
+
 //            employeeTable.setItems(data);
-////            populateSqlResults(data);
-//            //Populate Employees on TableView
-////            populateEmployees(empData);
-//        } catch (SQLException e) {
-//            System.out.println("Error occurred while getting employees information from DB.\n" + e);
-//            throw e;
-//        }
-//    }
+            populateSqlResults(data);
+                //Populate Employees on TableView
+//            populateEmployees(empData);
+            } catch (SQLException e) {
+                showWarningMessage(e.getMessage());
+                System.out.println("Error occurred while getting employees information from DB.\n" + e);
+                throw e;
+            }
+        } else {
+            showWarningMessage("SQL should not be empty!!!");
+        }
+
+    }
+
+    public void showWarningMessage(String message) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Warning Message");
+        alert.setHeaderText(message);
+        alert.show();
+    }
 
 }

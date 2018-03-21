@@ -5,7 +5,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import sample.controller.LoginController;
+import sample.manager.LoginManager;
 
 import java.io.IOException;
 
@@ -18,6 +21,8 @@ public class Main extends Application {
     //This is the BorderPane of RootLayout
     private BorderPane rootLayout;
 
+    private StackPane stackPane;
+
     @Override
     public void start(Stage primaryStage) {
         //1) Declare a primary stage (Everything will be on this stage)
@@ -26,11 +31,19 @@ public class Main extends Application {
         //Optional: Set a title for primary stage
         this.primaryStage.setTitle("Udblab2017");
 
+        showLoginView();
+
         //2) Initialize RootLayout
-        initRootLayout();
+//        initRootLayout();
 
         //3) Display the EmployeeOperations View
-        showEmployeeView();
+//        showEmployeeView();
+    }
+
+    private void showLoginView() {
+        Scene scene = new Scene(new StackPane());
+        LoginManager loginManager = new LoginManager(scene, primaryStage);
+        loginManager.showLoginScreen();
     }
 
     //Initializes the root layout.

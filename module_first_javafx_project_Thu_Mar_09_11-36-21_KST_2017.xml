@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_first_javafx_project" default="compile.module.first_javafx_project">
+  <dirname property="module.first_javafx_project.basedir" file="${ant.file.module_first_javafx_project}"/>
+  
+  <property name="module.jdk.home.first_javafx_project" value="${jdk.home.1.8}"/>
+  <property name="module.jdk.bin.first_javafx_project" value="${jdk.bin.1.8}"/>
+  <property name="module.jdk.classpath.first_javafx_project" value="jdk.classpath.1.8"/>
+  
+  <property name="compiler.args.first_javafx_project" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="first_javafx_project.output.dir" value="${module.first_javafx_project.basedir}/out/production/First_JavaFX_Project"/>
+  <property name="first_javafx_project.testoutput.dir" value="${module.first_javafx_project.basedir}/out/test/First_JavaFX_Project"/>
+  
+  <path id="first_javafx_project.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="first_javafx_project.module.production.classpath">
+    <path refid="${module.jdk.classpath.first_javafx_project}"/>
+    <path refid="library.com.oracle:ojdbc6:11.2.0.3.classpath"/>
+  </path>
+  
+  <path id="first_javafx_project.runtime.production.module.classpath">
+    <pathelement location="${first_javafx_project.output.dir}"/>
+    <path refid="library.com.oracle:ojdbc6:11.2.0.3.classpath"/>
+  </path>
+  
+  <path id="first_javafx_project.module.classpath">
+    <path refid="${module.jdk.classpath.first_javafx_project}"/>
+    <pathelement location="${first_javafx_project.output.dir}"/>
+    <path refid="library.com.oracle:ojdbc6:11.2.0.3.classpath"/>
+  </path>
+  
+  <path id="first_javafx_project.runtime.module.classpath">
+    <pathelement location="${first_javafx_project.testoutput.dir}"/>
+    <pathelement location="${first_javafx_project.output.dir}"/>
+    <path refid="library.com.oracle:ojdbc6:11.2.0.3.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.first_javafx_project">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.first_javafx_project">
+    <patternset refid="excluded.from.module.first_javafx_project"/>
+  </patternset>
+  
+  <path id="first_javafx_project.module.sourcepath">
+    <dirset dir="${module.first_javafx_project.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.first_javafx_project" depends="compile.module.first_javafx_project.production,compile.module.first_javafx_project.tests" description="Compile module First_JavaFX_Project"/>
+  
+  <target name="compile.module.first_javafx_project.production" depends="register.custom.compilers" description="Compile module First_JavaFX_Project; production classes">
+    <mkdir dir="${first_javafx_project.output.dir}"/>
+    <javac2 destdir="${first_javafx_project.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.first_javafx_project}/javac">
+      <compilerarg line="${compiler.args.first_javafx_project}"/>
+      <bootclasspath refid="first_javafx_project.module.bootclasspath"/>
+      <classpath refid="first_javafx_project.module.production.classpath"/>
+      <src refid="first_javafx_project.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.first_javafx_project"/>
+    </javac2>
+    
+    <copy todir="${first_javafx_project.output.dir}">
+      <fileset dir="${module.first_javafx_project.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.first_javafx_project.tests" depends="register.custom.compilers,compile.module.first_javafx_project.production" description="compile module First_JavaFX_Project; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.first_javafx_project" description="cleanup module">
+    <delete dir="${first_javafx_project.output.dir}"/>
+    <delete dir="${first_javafx_project.testoutput.dir}"/>
+  </target>
+</project>
